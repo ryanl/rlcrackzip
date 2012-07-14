@@ -1,12 +1,11 @@
 /*
- * rlcrackzip - Zip password cracker.
- * This test program displays info about a zip file.
+ * rlcrackzip - Zip info display program.
  *
  * Copyright (C) 2012 Ryan Lothian (see AUTHORS file).
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
+ * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -20,12 +19,16 @@
  */
 
 
-
 #include <iostream>
 #include <vector>
 
 #include "zip_read.h"
 
+
+/*
+ * Read zip file named on the command-line and output a human-readable
+ * summary of its contents.
+ */
 int
 main (int   argc,
       char *argv[])

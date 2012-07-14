@@ -5,9 +5,24 @@ rlcrackzip
 
 TO DO ------------------------------------------------------------------------
 
-- Find more ways to reduce the false positive count.
+- False positive count is very high! 1 in 256^(number of files). 
+  How can we reduce this?
+
+  - Could use the CRC32 to check passwords, though would need to 
+    implement/link in compression algorithms. Very slow, especially for large
+    files but reduces fp rate by factor of 2^32.
+
+  - For old versions of PKZIP could rely on non-randomness of initial 12 bytes.
+  
+  - Similar bugs may be present in other implementations, though it may not
+    be worth implementing as user may not know what program/version was used 
+    originally.
+
+- Some chosen plain-text statistical attacks are documented online.
 
 - Add more documentation, sort out formatting, boilerplate text etc.
+
+- Add dictionary mode.
 
 
 Version #1 - July 2012 -------------------------------------------------------
