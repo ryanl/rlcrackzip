@@ -79,6 +79,10 @@ public:
 		entries = 0;
 	}
 
+        unsigned int capacity() const {
+            return n;
+        }
+
 	/*!
 		Does nothing except assert i <= n (if NDEBUG is not set). Provided for
 		convenience so StaticVector can replace std::vector more easily.

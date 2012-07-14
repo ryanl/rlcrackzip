@@ -113,8 +113,8 @@ void BruteforceGenerator::next(StaticVector<char, MAX_PW_LEN>  *pw_out,
         pw_out->resize(pw_length);
         /* Work out the first password */
         for (int32_t i = pw_length - 1; i >= 0; i--) {
-            (*pw_out)[i] = this->charset[i % this->charset.size()];
-            i /= this->charset.size();
+            (*pw_out)[i] = this->charset[this->start_index % this->charset.size()];
+            this->start_index /= this->charset.size();
         }
         *same_chars = 0;
 

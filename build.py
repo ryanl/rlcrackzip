@@ -48,8 +48,8 @@ targets = {
     "rlcrackzip"        : src_folder + "main.cpp",
 }
 
-#compiler = ["g++", "-fopenmp", "-O2", "-flto", "-DNDEBUG", "-pipe", "-march=native", "-Wall"] #-flto -O3
-compiler = ["g++", "-ggdb", "-Wall", "-march=native"]
+compiler = ["g++", "-fopenmp", "-O2", "-flto", "-DNDEBUG", "-pipe", "-march=native", "-Wall"]
+#compiler = ["g++", "-ggdb", "-Wall", "-march=native"]
 
 libs = ["-lgcov"]
 

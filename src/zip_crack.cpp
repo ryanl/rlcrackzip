@@ -201,7 +201,7 @@ crack_zip_password (const std::vector<file_info_type>  &files,
 
             decoded_bytes.clear();
 
-            for (uint32_t j = 0; j < file.d.size(); j++) {
+            for (uint32_t j = 0; j < std::min<uint32_t>(file.d.size(), decoded_bytes.capacity()); j++) {
                 uint8_t keystream_byte = zipkey_get_keystream_byte(perfile_key);
                 uint8_t decoded_byte   = file.d[j] ^ keystream_byte;
                 zipkey_step(&perfile_key, decoded_byte);
@@ -209,7 +209,7 @@ crack_zip_password (const std::vector<file_info_type>  &files,
                 decoded_bytes.push_back(decoded_byte);
             }
 
-            all_ok_so_far = UNLIKELY(checker.check(file, decoded_bytes));
+            all_ok_so_far = checker.check(file, decoded_bytes);
         }
         if (all_ok_so_far) {
             pw_collector.collect(password);

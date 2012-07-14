@@ -26,9 +26,10 @@
 #include <vector>
 #include "static_vector.h"
 
-#define FILE_READ_SIZE 20 // should be enough for most format specialized decoders
+#define FILE_READ_SIZE 12 // could increase in future for specialized decoders
 
 
+// future: check decompressed bytes against type
 typedef enum {
     FILE_TYPE_ASCII,     // expect all characters < 128
     FILE_TYPE_JPEG,      // expect a jpeg or exif file header

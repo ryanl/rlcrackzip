@@ -94,7 +94,7 @@ main (int argc, char *argv[])
         std::cout << "Usage: " << argv[0] << " <zip file name>\n";
         rc = 1;
     } else {
-//        StaticVector<char, 256>      bfg_charset = parse_charset("a");
+        StaticVector<char, 256>      bfg_charset = parse_charset("a");
         uint64_t                     count      = 27 * 27 * 27 * 27 * 27 * 27;
         uint64_t                     chunk_size = 1000000;
         uint64_t                     chunks     = 1 + ((count - 1) / chunk_size);
@@ -106,10 +106,12 @@ main (int argc, char *argv[])
 
         #pragma omp parallel for schedule(dynamic)
         for (uint64_t i = 0; i < chunks; i++) {
-//            BruteforceGenerator  bfg(bfg_charset, i * chunk_size, chunk_size);
-            OnePasswordGenerator spg("noradi");
-            crack_zip_password(files, spg, dc, pwc);
-            return 0;
+             #pragma omp critical
+             std::cout << i << " " << (i * chunk_size) << " " << chunk_size << "\n";
+
+             BruteforceGenerator  bfg(bfg_charset, i * chunk_size, chunk_size);
+//            OnePasswordGenerator spg("noradi");
+            crack_zip_password(files, bfg, dc, pwc);
         }
 
         std::cout << count / (time(NULL) - start_time) << " passwords checked per second (total " << count << ").\n";

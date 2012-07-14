@@ -1,5 +1,7 @@
 Zip password recovery program.
 
+To build: python build.py
+
 License: GPL 3, or (at your option), any later version. See COPYING.
 
 TODO
