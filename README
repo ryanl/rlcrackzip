@@ -35,25 +35,18 @@ To run tests (recommended):
 
     $ python run_tests.py
 
+
 Use
 ---
+
+    $ bin/rlcrackzip <zip file name>
+
+At present, only bruteforce lower-case alphabetical mode for up to 6 chars is enabled.
+You'll likely want to edit src/main.cpp.
 
 
 Feedback
 --------
-Please e-mail go <at> ryanlothian.com.
+Please e-mail crackzip <at> ryanlothian.com or add an issue on Github https://github.com/ryanl/rlcrackzip.
 
 Thanks!
-
-License:       GPL3
-
-Zip password recovery program.
-
-To build: python build.py
-
-Benchmark: 15,000,000 passwords tried per second on a three core AMD Phenom II.
-
-License: GPL 3, or (at your option), any later version. See COPYING.
-
-TODO
-
