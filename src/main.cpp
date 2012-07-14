@@ -111,7 +111,7 @@ main (int argc, char *argv[])
             crack_zip_password(files, bfg, dc, pwc);
         }
 
-        std::cout << count / (time(NULL) - start_time) << " passwords checked per second (total " << count << ").\n";
+        std::cerr << count / (time(NULL) - start_time) << " passwords checked per second (total " << count << ").\n";
 
         rc = 0;
     }

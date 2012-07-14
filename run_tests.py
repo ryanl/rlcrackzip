@@ -1,5 +1,6 @@
 #!/usr/bin/python
 
+import sys
 import os
 import os.path
 
@@ -10,12 +11,19 @@ off   = "\033[0m"
 SUCCESS = green  + "SUCCESS" + off + "\n"
 FAILURE = red    + "FAILURE" + off + "\n"
 
-def test_against_log(test_id, test_desc, prog, rc_ok=True):
+def test_against_log(test_id, test_desc, prog, rc_ok=True, sortuniq=False):
     print "TEST {}: {}:".format(test_id, test_desc),
+    sys.stdout.flush()
 
     run_log  = "test/test{}_output".format(test_id)
     good_log = run_log + "_good"
-    rc = os.system("{} > {}".format(prog, run_log))
+
+    if sortuniq:
+        postfix = " | sort -u"
+    else:
+        postfix = ""
+
+    rc = os.system("{} > {}{}".format(prog, run_log, postfix))
 
     with open(run_log, "r") as f:
         seen_output = f.read().strip()
@@ -46,7 +54,8 @@ def test1():
 def test2():
     test_against_log(test_id=2,
                      test_desc="crack noradi.zip",
-                     prog="bin/rlcrackzip test/noradi.zip")
+                     prog="bin/rlcrackzip test/noradi.zip",
+                     sortuniq=True)
 
 def test3():
     test_against_log(test_id=3,
