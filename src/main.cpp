@@ -106,9 +106,6 @@ main (int argc, char *argv[])
 
         #pragma omp parallel for schedule(dynamic)
         for (uint64_t i = 0; i < chunks; i++) {
-             #pragma omp critical
-             std::cout << i << " " << (i * chunk_size) << " " << chunk_size << "\n";
-
              BruteforceGenerator  bfg(bfg_charset, i * chunk_size, chunk_size);
 //            OnePasswordGenerator spg("noradi");
             crack_zip_password(files, bfg, dc, pwc);
