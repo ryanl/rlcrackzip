@@ -1,10 +1,32 @@
+/*
+ * rlcrackzip - Zip password cracker.
+ *
+ * Copyright (C) 2012 Ryan Lothian and Marc Lehmann (see AUTHORS file).
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
+ */
+
+
 #ifndef CRC32_H
 #define CRC32_H
 
+#include <stdint.h>
+
 /* crc32 0xdebb20e3 table and supplementary functions.  */
 
-static const u32 crc_32_tab[] =
-{
+static const uint32_t crc_32_tab[] = {
     0x00000000UL, 0x77073096UL, 0xee0e612cUL, 0x990951baUL, 0x076dc419UL,
     0x706af48fUL, 0xe963a535UL, 0x9e6495a3UL, 0x0edb8832UL, 0x79dcb8a4UL,
     0xe0d5e91eUL, 0x97d2d988UL, 0x09b64c2bUL, 0x7eb17cbdUL, 0xe7b82d07UL,
@@ -59,7 +81,7 @@ static const u32 crc_32_tab[] =
     0x2d02ef8dL
 };
 
-#define crc32(crc,byte) (crc_32_tab[(u8)(crc) ^ (u8)(byte)] ^ ((crc) >> 8))
+#define crc32(crc, byte) (crc_32_tab[(uint8_t)(crc) ^ (uint8_t)(byte)] ^ ((crc) >> 8))
 
-#endif
+#endif /* CRC32_H */
 

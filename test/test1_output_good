@@ -1,0 +1,32 @@
+Member:             TEXT1.TXT
+Version:            20
+Flags:              1
+Compression method: 8
+Last mod:           42244 9325
+CRC32:              3530965632
+Compressed size:    104
+Uncompressed size:  110
+Extra field len:    0
+Leading bytes:      135 93 238 54 216 67 233 136 25 250 174 72 
+
+Member:             TEXT2.TXT
+Version:            20
+Flags:              1
+Compression method: 8
+Last mod:           42225 9325
+CRC32:              1611207933
+Compressed size:    96
+Uncompressed size:  99
+Extra field len:    0
+Leading bytes:      79 163 100 140 213 92 219 220 7 27 250 225 
+
+Member:             TEXT3.TXT
+Version:            20
+Flags:              1
+Compression method: 8
+Last mod:           42203 9325
+CRC32:              1663117758
+Compressed size:    86
+Uncompressed size:  88
+Extra field len:    0
+Leading bytes:      13 149 7 241 205 149 210 23 200 202 219 17

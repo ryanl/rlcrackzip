@@ -1,1 +1,5 @@
-Marc Lehmann <pcg@goof.com>
+
+Marc Lehmann <pcg@goof.com>             - Original author of fcrackzip
+
+Ryan Lothian <crackzip@ryanlothian.com> - Rewrote in C++. Renamed to rlcrackzip to avoid any claim on 'fcrackzip'.
+                                          See NEWS for more change info.

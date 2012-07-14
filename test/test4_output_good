@@ -1,0 +1,17 @@
+bg(ABC, 0, 10)
+ 0
+A 0
+B 0
+C 0
+AA 0
+AB 1
+AC 1
+BA 0
+BB 1
+BC 1
+
+bg(ABC, 2, 4)
+A 0
+B 0
+C 0
+AA 0
