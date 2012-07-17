@@ -78,7 +78,27 @@ def test6():
                      test_desc="cipher implementation test", 
                      prog="bin/test_crack_zip")
 
-print "\nRunning tests...\n"        
+def testC1():
+    print "TEST c1: check all files have a copyright header",
+
+    fmc_fn = "files_missing_copyright"
+    os.system("find src/ -regextype posix-extended -regex '.*\.(h|cpp)' | xargs grep -L Copyright > " + fmc_fn)
+
+
+    with open(fmc_fn, "r") as f:
+        fmc = f.read().strip().split("\n")
+
+    if fmc:
+        print FAILURE + "\nThe following files are missing copyright headers:"
+        print "\n".join("  * " + line for line in fmc)
+    else:
+        print SUCCESS
+    os.unlink(fmc_fn)
+
+print ""
+print "Running tests..."
+print "----------------"        
+
 test1()
 test2()
 test3()
@@ -86,5 +106,9 @@ test4()
 test5()
 test6()
 
+print "Running coding standards tests..."
+print "---------------------------------"        
+testC1()
+
 # That's it for now.
-print ""
+
