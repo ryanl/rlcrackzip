@@ -73,12 +73,18 @@ def test5():
                      test_desc="decode check test", 
                      prog="bin/test_decode_check")
 
+def test6():
+    test_against_log(test_id=6,
+                     test_desc="cipher implementation test", 
+                     prog="bin/test_crack_zip")
+
 print "\nRunning tests...\n"        
 test1()
 test2()
 test3()
 test4()
 test5()
+test6()
 
 # That's it for now.
 print ""

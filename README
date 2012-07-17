@@ -1,7 +1,8 @@
 Zip Password Recovery program
 =============================
 
-Copyright (C) 2012 Ryan Lothian. Parts also Copyright 2012 (C) Marc Lehmann. See AUTHORS.
+Copyright (C) 2012 Ryan Lothian. Parts also Copyright 2012 (C) Marc Lehmann. 
+See AUTHORS.
 
 
 License: GPL3
@@ -41,12 +42,20 @@ Use
 
     $ bin/rlcrackzip <zip file name>
 
-At present, only bruteforce lower-case alphabetical mode for up to 6 chars is enabled.
-You'll likely want to edit src/main.cpp.
+At present, only bruteforce lower-case alphabetical mode for up to 6 chars is 
+enabled. You'll likely want to edit src/main.cpp.
 
 
-Feedback
---------
-Please e-mail crackzip <at> ryanlothian.com or add an issue on Github https://github.com/ryanl/rlcrackzip.
+Benchmark (17 July 2012) - Phenom II X3
+---------------------------------------
+noradi.zip: 19,371,024 passwords checked per second :)
+
+
+
+Feedback 
+-------- 
+
+Please e-mail crackzip <at> ryanlothian.com or add an issue 
+on Github https://github.com/ryanl/rlcrackzip.
 
 Thanks!

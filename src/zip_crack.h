@@ -66,4 +66,49 @@ crack_zip_password (const std::vector<file_info_type>  &files,
                     PasswordCollectorInterface       &collector);
 
 
+
+/*
+ * Implements the standard zip encryption stream cipher.
+ *
+ * Note: the encryption provided is weak and should not be used to store sensitive data.
+ */
+class ZipStreamCipher
+{
+private:
+    /*
+     * The stream cipher has 96-bits of state.
+     */
+    uint32_t  key[3];
+
+    /*
+     * Prevent implicit instantiation.
+     */
+    ZipStreamCipher () {}
+
+public:
+
+
+    /*
+     * Standard starting state for the zip cipher
+     */
+    static ZipStreamCipher initialState();
+
+    /*
+     * Advance stream cipher state by one byte. Note that the next state depends on the most
+     * recent plaintext (or password) character.
+     */
+    void advanceOneByte(uint8_t  pw_char);
+
+    /*
+     * Convert state to a byte that can be xored with plaintext to get ciphertext (or vice-versa of course).
+     */
+    uint8_t getKeystreamByte() const;
+
+    /*
+     * Print state.
+     */
+    friend std::ostream& operator<<(std::ostream& output, const ZipStreamCipher&  zsc);
+};
+
+
 #endif /* ZIP_CRACK_H */

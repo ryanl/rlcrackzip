@@ -90,8 +90,8 @@ main (int argc, char *argv[])
 {
     int                          rc;
 
-    if (argc != 2) {
-        std::cout << "Usage: " << argv[0] << " <zip file name>\n";
+    if (argc != 2 && argc != 3) {
+        std::cout << "Usage: " << argv[0] << " <zip file name> [<wordlist>]\n";
         rc = 1;
     } else {
         StaticVector<char, 256>      bfg_charset = parse_charset("a");
@@ -102,6 +102,22 @@ main (int argc, char *argv[])
         DecodeChecker                dc;
         std::vector<file_info_type>  files = load_zip(argv[1]);
 
+/*
+        if (argc == 2) {
+            uint32_t read_size = 1000000;
+            for (uint64_t  i = 0;; i++) {
+                char  read_buffer[read_size];
+
+                // read some more words
+                #pragma omp critical
+                {
+                    fread(read_buffer, 1, read_size, wordlist_file);
+                    // Should keep reading until \n 
+                }
+            }
+            Wordlist
+        }
+*/
         time_t start_time = time(NULL);
 
         #pragma omp parallel for schedule(dynamic)

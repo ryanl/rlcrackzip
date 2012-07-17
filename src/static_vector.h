@@ -21,7 +21,7 @@
 #ifndef STATIC_VECTOR_H
 #define STATIC_VECTOR_H
 
-#define STATIC_VECTOR_NOINIT_HACK 0
+#define STATIC_VECTOR_NOINIT_HACK 1
 
 #include "assert.h"
 #include "boost/type_traits/alignment_of.hpp"

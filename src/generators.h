@@ -46,6 +46,13 @@ public:
                       uint32_t                        *same_chars) = 0;
 };
 
+/*
+class MemoryWordlistGenerator
+{
+public:
+     MemoryWordlistGenereator
+}
+*/
 
 /*
  * Good for testing.

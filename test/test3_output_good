@@ -1,1 +1,1 @@
-Usage: bin/rlcrackzip <zip file name>
+Usage: bin/rlcrackzip <zip file name> [<wordlist>]

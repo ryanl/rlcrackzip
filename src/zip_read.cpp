@@ -64,6 +64,8 @@ decode_zip_file_header (FILE            *f,
 
     count_read = fread(member_path, 1, name_len, f);
     assert(count_read == name_len);
+    (void)count_read; // prevent unused variable warning when asserts are disabled
+
     member_path[name_len] = 0;
     file_info->file_path = std::string(member_path);
 

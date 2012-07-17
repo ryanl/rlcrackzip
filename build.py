@@ -42,13 +42,14 @@ src_folder     = mypath + "/src/"
 include_folder = mypath + "/include/"
 
 targets = {
+    "test_crack_zip"    : src_folder + "test_crack_zip.cpp",
     "test_read_zip"     : src_folder + "test_read_zip.cpp",
     "test_generators"   : src_folder + "test_generators.cpp",
     "test_decode_check" : src_folder + "test_decode_check.cpp",
     "rlcrackzip"        : src_folder + "main.cpp",
 }
 
-compiler = ["g++", "-fopenmp", "-O2", "-flto", "-DNDEBUG", "-pipe", "-march=native", "-Wall"]
+compiler = ["g++", "-fopenmp", "-O3", "-flto", "-DNDEBUG", "-pipe", "-march=native", "-Wall"]
 #compiler = ["g++", "-ggdb", "-Wall", "-march=native"]
 
 libs = ["-lgcov"]

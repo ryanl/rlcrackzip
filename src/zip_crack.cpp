@@ -28,45 +28,49 @@
 
 
 /*
- * State of the zip stream cipher.
+ * Sample output: "[111122223333444455556666]"
  */
-typedef struct {
-    uint32_t  key[3];
-} zipkey_type;
-
-
-inline zipkey_type
-zipkey_get_initial_state ()
+std::ostream& operator<<(std::ostream& output, const ZipStreamCipher&  zsc)
 {
-    zipkey_type zk;
-    zk.key[0] = 0x12345678U;
-    zk.key[1] = 0x23456789U;
-    zk.key[2] = 0x34567890U;
-    return zk;
+    output << "[" << std::hex;
+    for (uint32_t i = 0; i < 3; i++) {
+        output << zsc.key[i];
+    }
+    output << "]" << std::dec;
+
+    return output;
 }
 
 
-/*
- * Advance stream cipher state by one byte. Note that the next state depends on the most
- * recent plaintext (or password) character.
- */
-inline void
-zipkey_step (zipkey_type   *zk,
-             const uint8_t  pw_char)
+ZipStreamCipher
+ZipStreamCipher::initialState()
 {
-    zk->key[0] = crc32(zk->key[0], pw_char);
-    zk->key[1] = (zk->key[1] + (uint8_t)zk->key[0]) * 134775813U + 1U;
-    zk->key[2] = crc32(zk->key[2], zk->key[1] >> 24);
+    ZipStreamCipher zsc;
+
+    zsc.key[0] = 0x12345678U;
+    zsc.key[1] = 0x23456789U;
+    zsc.key[2] = 0x34567890U;
+
+    return zsc;
+}
+
+
+void
+ZipStreamCipher::advanceOneByte (uint8_t  pw_char)
+{
+    this->key[0] = crc32(this->key[0], pw_char);
+    this->key[1] = (this->key[1] + (uint8_t)this->key[0]) * 134775813U + 1U;
+    this->key[2] = crc32(this->key[2], this->key[1] >> 24);
 }
 
 
 /*
  * Convert state to a byte that can be xored with plaintext to get ciphertext (or vice-versa of course).
  */
-inline uint8_t
-zipkey_get_keystream_byte (const zipkey_type &zk)
+uint8_t
+ZipStreamCipher::getKeystreamByte () const
 {
-    uint16_t t = zk.key[2] | 2;
+    uint16_t t = this->key[2] | 2;
     return (t * (t ^ 1)) >> 8;
 }
 
@@ -88,15 +92,18 @@ DecodeChecker::DecodeChecker (bool quadratic_residue_checks) : is_quadratic_resi
     }
 }
 
-// approx 1 in 100 billion passwords
+
 float DecodeChecker::false_positive_rate () const {
-    // 6.0f comes from fact that roughly a sixth are quadratic residues
-    return 1.0f / (6.0f * 6.0f * 65536.0f * 65536.0f);
+    return 1.0f / 256.0f; // very high :(
 }
 
 
 bool DecodeChecker::check (const file_info_type&                         file,
                            const StaticVector<uint8_t, FILE_READ_SIZE>&  decode) const {
+
+// Commenting out: these were true in days of old but in recent versions only the last
+//                 byte is guaranteed to be predictible. Still, we could check the CRC
+//                 although this is slow for large files.
 
 /*    uint16_t w2 = (decode[3] << 8) + decode[2];
     // first 16-bit word we will ignore for now
@@ -169,11 +176,11 @@ crack_zip_password (const std::vector<file_info_type>  &files,
      * recalculate from the point at which pw is first different to the previous pw.
      */
 
-    StaticVector<zipkey_type, MAX_PW_LEN + 1>  key_stack;
-    StaticVector<char, MAX_PW_LEN>             password;
-    StaticVector<uint8_t, FILE_READ_SIZE>      decoded_bytes;
+    StaticVector<ZipStreamCipher, MAX_PW_LEN + 1>  key_stack;
+    StaticVector<char, MAX_PW_LEN>                 password;
+    StaticVector<uint8_t, FILE_READ_SIZE>          decoded_bytes;
 
-    key_stack.push_back(zipkey_get_initial_state());
+    key_stack.push_back(ZipStreamCipher::initialState());
 
     while (LIKELY(!generator.isDone())) {
 
@@ -181,15 +188,15 @@ crack_zip_password (const std::vector<file_info_type>  &files,
         generator.next(&password, &i);
 
         /* Restore key (i will be number of leading characters same as last password) */
-        zipkey_type key = key_stack[i];
+        ZipStreamCipher zsc = key_stack[i];
 
         /* Remove keystack items for subsequent characters. */
         key_stack.resize(i + 1);
 
         /* For each remaining character in the password, update the key and save in stack. */
         for (; i < password.size(); i++) {
-            zipkey_step(&key, password[i]);
-            key_stack.push_back(key); /* save on stack */
+            zsc.advanceOneByte(password[i]);
+            key_stack.push_back(zsc); /* save on stack */
         }
 
         /* For each file decode the first 12 bytes and check whether they look sensible.*/
@@ -197,15 +204,13 @@ crack_zip_password (const std::vector<file_info_type>  &files,
         bool all_ok_so_far = true;
         for (uint32_t file_id = 0; file_id < files.size() && all_ok_so_far; file_id++) {
             const file_info_type &file = files[file_id];
-            zipkey_type  perfile_key = key;
+            ZipStreamCipher  perfile_zsc = zsc;
 
             decoded_bytes.clear();
 
             for (uint32_t j = 0; j < std::min<uint32_t>(file.d.size(), decoded_bytes.capacity()); j++) {
-                uint8_t keystream_byte = zipkey_get_keystream_byte(perfile_key);
-                uint8_t decoded_byte   = file.d[j] ^ keystream_byte;
-                zipkey_step(&perfile_key, decoded_byte);
-
+                uint8_t decoded_byte   = file.d[j] ^ perfile_zsc.getKeystreamByte();
+                perfile_zsc.advanceOneByte(decoded_byte);
                 decoded_bytes.push_back(decoded_byte);
             }
 
