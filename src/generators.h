@@ -28,7 +28,7 @@
 #include "stdint.h"
 
 
-#define MAX_PW_LEN 100
+#define MAX_PW_LEN 200
 
 class GeneratorInterface
 {
@@ -46,13 +46,28 @@ public:
                       uint32_t                        *same_chars) = 0;
 };
 
+
 /*
-class MemoryWordlistGenerator
+ * Rather than handling files here directly, this just works with memory
+ * for speed, and to allow the complexities of splitting a wordlist
+ * among several threads to be kept out of the innards.
+ */
+class MemoryWordlistGenerator : public GeneratorInterface
 {
+private:
+    const char  *wordlist;
+    const char  *old_word_start;
+
 public:
-     MemoryWordlistGenereator
-}
-*/
+    /*
+     * wordlist must be null-terminated.
+     */
+    MemoryWordlistGenerator(const char *wordlist);
+    bool isDone() const;
+    void next(StaticVector<char, MAX_PW_LEN>  *pw_out,
+              uint32_t                        *same_chars);
+};
+
 
 /*
  * Good for testing.

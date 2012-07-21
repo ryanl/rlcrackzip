@@ -23,7 +23,7 @@
 #include "generators.h"
 
 
-void print_some_output(BruteforceGenerator bg)
+void print_some_output(GeneratorInterface &bg)
 {
     StaticVector<char, MAX_PW_LEN>  pw;
     uint32_t                        same_chars;
@@ -53,11 +53,23 @@ StaticVector<char, 256> string_to_array(const char *s)
 
 int main(int argc, char *argv[])
 {
-    std::cout << "bg(ABC, 0, 10)\n";
-    print_some_output(BruteforceGenerator(string_to_array("ABC"), 0, 10));
-
-    std::cout << "bg(ABC, 2, 4)\n";
-    print_some_output(BruteforceGenerator(string_to_array("ABC"), 2, 4));
+    {
+        BruteforceGenerator bg(string_to_array("ABC"), 0, 10);
+        std::cout << "bg(ABC, 0, 10)\n";
+        print_some_output(bg);
+    }
+    {
+        BruteforceGenerator bg(string_to_array("ABC"), 2, 4);
+        std::cout << "bg(ABC, 2, 4)\n";
+        print_some_output(bg);
+    }
+    {
+        // This wordlist has some common successive prefixes which tests the same_chars output
+        const char *memory_wordlist = "there\nare\nfive\nwonderful\nwords\nthen\nrepeat\nrepeat";
+        MemoryWordlistGenerator mwg(memory_wordlist);
+        std::cout << "wordlist(\"" << memory_wordlist << "\")\n";
+        print_some_output(mwg);
+    }
 
     return 0;
 }

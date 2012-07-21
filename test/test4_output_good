@@ -16,3 +16,20 @@ C 0
 AA 0
 AB 1
 
+wordlist("there
+are
+five
+wonderful
+words
+then
+repeat
+repeat")
+there 0
+are 0
+five 0
+wonderful 0
+words 2
+then 0
+repeat 0
+repeat 6
+

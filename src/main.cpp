@@ -89,42 +89,67 @@ int
 main (int argc, char *argv[])
 {
     int                          rc;
+    PasswordCollectorPrint       pwc;
+    DecodeChecker                dc;
 
     if (argc != 2 && argc != 3) {
         std::cout << "Usage: " << argv[0] << " <zip file name> [<wordlist>]\n";
         rc = 1;
-    } else {
+    } else if (argc == 3) { // wordlist mode
+
+        FILE *f = NULL;
+        if (strcmp(argv[2], "-") == 0) {
+            f = stdin;
+        } else {
+            fopen(argv[2], "r");
+        }
+        if (f == NULL) {
+            std::cout << "Could not open file: " << argv[2] << "\n";
+            exit(1);
+        }
+
+        const uint32_t  buffer_size = 100 * 1024; // 100kB
+        std::vector<file_info_type>  files = load_zip(argv[1]);
+
+        #pragma omp parallel
+        {
+            char  buffer[buffer_size];
+            bool  loop = true;
+            while (loop) {
+                #pragma omp critical
+                {
+                    uint32_t  count_read = fread(buffer, 1, sizeof(buffer), f);
+                    if (count_read == 0) {
+                        loop = false;
+                    } else {
+                        buffer[count_read] = '\0';
+                        if (!feof(f)) {
+                            fseek(f, -50, SEEK_CUR); // assume all passwords are < 50 characters
+                        }
+                    }
+                }
+
+                if (loop) {
+
+                   MemoryWordlistGenerator  mwg(buffer);
+                   crack_zip_password(files, mwg, dc, pwc);
+                }
+            }
+        }
+        rc = 0;
+    } else if (argc == 2) {
         StaticVector<char, 256>      bfg_charset = parse_charset("a");
         uint64_t                     count      = 27 * 27 * 27 * 27 * 27 * 27;
         uint64_t                     chunk_size = 1000000;
         uint64_t                     chunks     = 1 + ((count - 1) / chunk_size);
-        PasswordCollectorPrint       pwc;
-        DecodeChecker                dc;
         std::vector<file_info_type>  files = load_zip(argv[1]);
 
-/*
-        if (argc == 2) {
-            uint32_t read_size = 1000000;
-            for (uint64_t  i = 0;; i++) {
-                char  read_buffer[read_size];
-
-                // read some more words
-                #pragma omp critical
-                {
-                    fread(read_buffer, 1, read_size, wordlist_file);
-                    // Should keep reading until \n 
-                }
-            }
-            Wordlist
-        }
-*/
         time_t start_time = time(NULL);
 
         #pragma omp parallel for schedule(dynamic)
         for (uint64_t i = 0; i < chunks; i++) {
              BruteforceGenerator  bfg(bfg_charset, i * chunk_size, chunk_size);
-//            OnePasswordGenerator spg("noradi");
-            crack_zip_password(files, bfg, dc, pwc);
+             crack_zip_password(files, bfg, dc, pwc);
         }
 
         std::cerr << count / (time(NULL) - start_time) << " passwords checked per second (total " << count << ").\n";

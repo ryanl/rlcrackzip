@@ -91,7 +91,7 @@ def test6():
 def test7():
     test_against_log(test_id=7,
                      test_desc="read noradi.zip, wordlist mode", 
-                     prog="echo 'noradi' | bin/test_read_zip test/noradi.zip -w -",
+                     prog="echo 'noradi' | bin/test_read_zip test/noradi.zip -",
                      max_time=0.1)
 
 

@@ -34,6 +34,11 @@
 #include "optimization.h"
 
 
+/*
+ * OnePasswordenerator
+ * ---------------------------------------------------------------------------
+ */
+
 OnePasswordGenerator::OnePasswordGenerator(std::string  password) :
     password(password),
     done(false)
@@ -61,10 +66,64 @@ OnePasswordGenerator::next(StaticVector<char, MAX_PW_LEN>  *pw_out,
 }
 
 
+/*
+ * MemoryWordlistGenerator
+ * ---------------------------------------------------------------------------
+ */
+
+MemoryWordlistGenerator::MemoryWordlistGenerator (const char *wordlist)
+{
+     /*
+      * Essentially pretend that an empty word was already seen
+      * this simplifies the 'same_chars' calculation in next().
+      */
+    this->old_word_start = "\n";
+    this->wordlist = wordlist;
+}
+
+
+bool
+MemoryWordlistGenerator::isDone() const
+{
+     return *this->wordlist == '\0';
+}
+
+
+void
+MemoryWordlistGenerator::next (StaticVector<char, MAX_PW_LEN>  *pw_out,
+                               uint32_t                        *same_chars)
+{
+    pw_out->clear();
+
+    if (*this->wordlist == '\n') {
+        this->wordlist++;
+    }
+
+
+    const char *word_start = this->wordlist;
+
+    while (*this->wordlist != '\n' && *this->wordlist != '\0') {
+        pw_out->push_back(*this->wordlist);
+        this->wordlist++;
+    }
+    uint32_t  match_count = 0;
+
+    while (match_count < (this->wordlist - word_start) &&
+           word_start[match_count] == this->old_word_start[match_count]) {
+
+         match_count++;
+    }
+
+    *same_chars = match_count;
+    this->old_word_start = word_start;
+}
+
 
 /*
  * BruteforceGenerator
+ * ---------------------------------------------------------------------------
  */
+
 bool
 BruteforceGenerator::isDone() const
 {
@@ -77,7 +136,6 @@ BruteforceGenerator::isDone() const
 BruteforceGenerator::BruteforceGenerator(const StaticVector<char, 256>&  charset,
                                          uint64_t                        start_index,
                                          uint64_t                        gen_count)
- 
 {
     assert(gen_count > 0);
 
@@ -86,7 +144,7 @@ BruteforceGenerator::BruteforceGenerator(const StaticVector<char, 256>&  charset
     this->charset = charset;
     this->char_map.resize(256);
     for (uint32_t i = 0; i < charset.size(); i++) {
-       this->char_map[charset[i]] = i;
+       this->char_map[charset[i]] = charset[(i + 1) % charset.size()];
     }
 
     this->start_index     = start_index;
@@ -125,17 +183,16 @@ void BruteforceGenerator::next(StaticVector<char, MAX_PW_LEN>  *pw_out,
         int32_t i;
 
         for (i = pw_out->size() - 1; i >= 0; i--) {
-             uint32_t  char_val = this->char_map[(*pw_out)[i]];
              *same_chars -= 1;
-             if (char_val < this->charset.size() - 1) {
-                 (*pw_out)[i] = this->charset[char_val + 1];
+             char new_char = this->char_map[(*pw_out)[i]];
+             (*pw_out)[i] = new_char;
+
+             if (new_char != this->charset[0]) {
                  break;
-             } else {
-                 (*pw_out)[i] = this->charset[0];
              }
         }
 
-        /* If we need to lengthen the key then do so. Note that all the other members will be 0 already. */
+        /* If we need to lengthen the key then do so. Note that all the other members will be charset[0] already. */
         if (UNLIKELY(i < 0)) {
             pw_out->push_back(this->charset[0]);
         }
